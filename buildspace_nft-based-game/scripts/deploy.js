@@ -7,26 +7,49 @@
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+	const contractFactory = await hre.ethers.getContractFactory('MyNFTsBasedGame');
+	const gameContract = await contractFactory.deploy(
+		["李承远", "Chibimaruko", "Pikachu"],			// Names
+		["https://img-qn.51miz.com/preview/element/00/01/12/94/E-1129426-CB628E6F.jpg!/quality/90/unsharp/true/compress/true/fwfh/800x800",	// Images
+		"https://zh.wikipedia.org/wiki/%E6%AB%BB%E6%A1%83%E5%B0%8F%E4%B8%B8%E5%AD%90#/media/File:%E6%AB%BB%E6%A1%83%E5%B0%8F%E4%B8%B8%E5%AD%90.jpg",
+		"https://i.imgur.com/WMB6g9u.png"],
+		[500, 30, 100],									// HP values
+		[500, 50, 25],									// Attack damage values
+		["master", "warrior", "elf"]					// Attack damage values
+	);
+	await gameContract.deployed();
+	console.log("Contract deployed to:", gameContract.address);
 
-  const lockedAmount = hre.ethers.utils.parseEther("0.001");
+	let txn;
+	// We only have three characters.
+	// an NFT w/ the character at index 0 of our array.
+	txn = await gameContract.mintCharacterNFT(0);
+	await txn.wait();
+	// Get the value of the NFT's URI.
+	let returnedTokenUri = await gameContract.tokenURI(0);
+	console.log("Token URI:", returnedTokenUri);
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+	txn = await gameContract.mintCharacterNFT(1);
+	await txn.wait();
+	returnedTokenUri = await gameContract.tokenURI(1);
+	console.log("Token URI:", returnedTokenUri);
 
-  await lock.deployed();
+	txn = await gameContract.mintCharacterNFT(2);
+	await txn.wait();
+	returnedTokenUri = await gameContract.tokenURI(2);
+	console.log("Token URI:", returnedTokenUri);
 
-  console.log(
-    `Lock with ${ethers.utils.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+	txn = await gameContract.mintCharacterNFT(1);
+	await txn.wait();
+	returnedTokenUri = await gameContract.tokenURI(3);
+	console.log("Token URI:", returnedTokenUri);
+
+	console.log("Done deploying and minting!");
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+	console.error(error);
+	process.exitCode = 1;
 });
