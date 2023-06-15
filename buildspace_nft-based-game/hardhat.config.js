@@ -1,13 +1,23 @@
 require("@nomicfoundation/hardhat-toolbox");
+// Import and configure dotenv
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
 	solidity: "0.8.18",
 	networks: {
+		goerli: {
+			url: process.env.STAGING_GOERLI_KEY,
+			accounts: [process.env.PRIVATE_KEY],
+		},
 		sepolia: {
 			// This value will be replaced on runtime
-			url: 'https://eth-sepolia.g.alchemy.com/v2/AaF6AH_k7jw4DiFjXHRr23gUk9EDQOB6',
-			accounts: ['3f'],
+			url: process.env.STAGING_SEPOLIA_KEY,
+			accounts: [process.env.PRIVATE_KEY],
+		},
+		mainnet: {
+			url: process.env.STAGING_SEPOLIA_KEY,
+			accounts: [process.env.PRIVATE_KEY],
 		},
 	},
 };
