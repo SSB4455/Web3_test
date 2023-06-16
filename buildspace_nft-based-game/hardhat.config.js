@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-etherscan");
 // Import and configure dotenv
 require("dotenv").config();
 
@@ -19,5 +20,8 @@ module.exports = {
 			url: process.env.STAGING_SEPOLIA_KEY,
 			accounts: [process.env.PRIVATE_KEY],
 		},
+	},
+	etherscan: {
+		apiKey: process.env.ETHERSCAN_APIKEY, // Your Etherscan API key
 	},
 };

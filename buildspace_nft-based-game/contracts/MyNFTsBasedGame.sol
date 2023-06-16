@@ -55,6 +55,9 @@ contract MyNFTsBasedGame is ERC721 {
 	// to store the owner of the NFT and reference it later.
 	mapping(address => uint256) public nftHolders;
 
+	event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+	event AttackComplete(address sender, uint newBossHp, uint newPlayerHp);
+
 	constructor(
 		string[] memory characterNames,
 		string[] memory characterImageURIs,
@@ -99,7 +102,29 @@ contract MyNFTsBasedGame is ERC721 {
 
 		// I increment _tokenIds here so that my first NFT has an ID of 1.
 		// More on this in the lesson!
-		//_tokenIds.increment();
+		_tokenIds.increment();
+	}
+
+	function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
+		// Get the tokenId of the user's character NFT
+		uint256 userNftTokenId = nftHolders[msg.sender];
+		// If the user has a tokenId in the map, return their character.
+		if (userNftTokenId > 0) {
+			return nftHolderAttributes[userNftTokenId];
+		}
+		// Else, return an empty character.
+		else {
+			CharacterAttributes memory emptyStruct;
+			return emptyStruct;
+		}
+	}
+
+	function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+		return defaultCharacters;
+	}
+
+	function getBigBoss() public view returns (BigBoss memory) {
+		return bigBoss;
 	}
 
 	function attackBoss() public {
@@ -130,7 +155,7 @@ contract MyNFTsBasedGame is ERC721 {
 			} else {
 				bigBoss.hp = bigBoss.hp - character.attackDamage;
 			}
-			console.log("%s attacked boss. New boss hp: %s", character.name, bigBoss.hp);
+			console.log("%s attacked boss. Boss hp: %s", character.name, bigBoss.hp);
 		} else {
 			console.log("%s missed!", character.name);
 		}
@@ -143,10 +168,12 @@ contract MyNFTsBasedGame is ERC721 {
 			} else {
 				character.hp = character.hp - bigBoss.attackDamage;
 			}
-			console.log("Boss %s fight back %s. New character hp: %s", bigBoss.name, character.name, character.hp);
+			console.log("Boss %s fight back, %s's hp: %s", bigBoss.name, character.name, character.hp);
 		} else {
 			console.log("Boss missed!");
 		}
+
+		emit AttackComplete(msg.sender, bigBoss.hp, character.hp);
 	}
 
 	// Users would be able to hit this function and get their NFT based on the
@@ -177,6 +204,8 @@ contract MyNFTsBasedGame is ERC721 {
 
 		// Increment the tokenId for the next person that uses it.
 		_tokenIds.increment();
+
+		emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
 	}
 
 	function tokenURI(uint256 _tokenId) public view override returns (string memory) {
