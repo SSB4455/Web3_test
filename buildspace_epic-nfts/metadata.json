@@ -1,0 +1,12 @@
+{
+    "description": "This NFT is a test",
+    "external_url": "Alchemy.com",
+    "image": "https://ipfs.filebase.io/ipfs/QmNhe81ZVPpv91oRmnAaJJwNN6nrUMzdiuyjG7Mc8NEnjW",
+    "name": "RainbowCat",
+    "attributes": [
+        {
+            "trait_type": "Base",
+            "value": "Starfish"
+        }
+    ]
+}

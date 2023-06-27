@@ -14,6 +14,9 @@ const main = async () => {
     // Wait for it to be mined.
     await txn.wait()
 
+	// Get the value of the NFT's URI.
+	let returnedTokenUri = await nftContract.tokenURI(0);
+	console.log("Token URI:", returnedTokenUri);
 };
 
 const runMain = async () => {
