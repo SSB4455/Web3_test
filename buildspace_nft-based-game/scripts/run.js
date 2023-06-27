@@ -7,7 +7,6 @@ const main = async () => {
 		"https://i.imgur.com/WMB6g9u.png"],
 		[500, 30, 100],									// HP values
 		[500, 50, 25],									// Attack damage values
-		["master", "warrior", "elf"],					// Attack damage values,
 		"The Mothor",									// Boss name
 		"https://i.imgur.com/VaDC2JL_d.webp",			// Boss image
 		10000, // Boss hp
@@ -26,17 +25,47 @@ const main = async () => {
 	let returnedTokenUri = await gameContract.tokenURI(0);
 	console.log("Token URI:", returnedTokenUri);
 
-	txn = await gameContract.attackBoss();
+	// We add four characters.
+	txn = await gameContract.addCharacterAttributes(
+		"Seed",									// Name
+		"https://i.imgur.com/htdlTWy.jpeg",		// Image
+		600,									// Max HP value
+		233
+	);
 	await txn.wait();
 
-	txn = await gameContract.attackBoss();
+	// an NFT w/ the character at index 3 of our array.
+	txn = await gameContract.mintCharacterNFT(3);
 	await txn.wait();
 
-	txn = await gameContract.attackBoss();
+	// Get the value of the NFT's URI.
+	returnedTokenUri = await gameContract.tokenURI(1);
+	console.log("Token URI:", returnedTokenUri);
+
+	txn = await gameContract.attackBoss(0);
 	await txn.wait();
 
-	txn = await gameContract.attackBoss();
+	txn = await gameContract.attackBoss(1);
 	await txn.wait();
+
+	txn = await gameContract.attackBoss(0);
+	await txn.wait();
+
+	txn = await gameContract.attackBoss(1);
+	await txn.wait();
+
+	txn = await gameContract.reviveBoss();
+	await txn.wait();
+
+	txn = await gameContract.reviveCharacter(1);
+	await txn.wait();
+
+	txn = await gameContract.attackBoss(1);
+	await txn.wait();
+
+	console.log("getUserHasCharacters:", gameContract.getUserHasCharacters());
+	console.log("getAllDefaultCharacters:", gameContract.getAllDefaultCharacters());
+
 };
 
 const runMain = async () => {

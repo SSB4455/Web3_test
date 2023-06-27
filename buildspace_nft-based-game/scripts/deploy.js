@@ -15,7 +15,6 @@ async function main() {
 		"https://i.imgur.com/WMB6g9u.png"],
 		[500, 30, 100],									// HP values
 		[500, 50, 25],									// Attack damage values
-		["master", "warrior", "elf"],					// Attack damage values,
 		"The Mothor",									// Boss name
 		"https://i.imgur.com/VaDC2JL_d.webp",			// Boss image
 		10000, // Boss hp
@@ -33,13 +32,23 @@ async function main() {
 	let returnedTokenUri = await gameContract.tokenURI(0);
 	console.log("Token URI:", returnedTokenUri);
 
-	txn = await gameContract.attackBoss();
+	// We add four characters.
+	txn = await gameContract.addCharacterAttributes(
+		"Seed",									// Name
+		"https://i.imgur.com/htdlTWy.jpeg",		// Image
+		600,									// Max HP value
+		233
+	);
 	await txn.wait();
 
-	txn = await gameContract.attackBoss();
+	txn = await gameContract.attackBoss(0);
 	await txn.wait();
 
 	console.log("Done deploying and minting!");
+
+	await run(`verify:verify`, {
+		address: gameContract.address
+	});
 }
 
 // We recommend this pattern to be able to use async/await everywhere
